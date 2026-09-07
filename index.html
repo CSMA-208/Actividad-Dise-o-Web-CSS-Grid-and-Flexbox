@@ -1,0 +1,408 @@
+<!-- ==========================================================
+     ALMACÉN CENTRAL · Panel de Inventario
+     Dashboard estático (sin JS) hecho con HTML + CSS puro.
+     Todos los datos (stock, movimientos, alertas) están
+     escritos a mano en el HTML; no hay lógica dinámica.
+
+     ⚠️ IMPORTANTE: este archivo depende de "styles.css", que debe
+     estar SIEMPRE en la misma carpeta que este index.html (ver
+     el <link rel="stylesheet"> más abajo, que usa una ruta relativa).
+     Si mueves o compartes el proyecto, copia AMBOS archivos juntos
+     o el HTML se verá sin ningún estilo. Más detalle en README.md.
+========================================================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almacén Central · Inventario</title>
+<!-- Fuentes de Google Fonts: Sora para títulos/números, Inter para el resto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Ruta RELATIVA al CSS: exige que styles.css viva junto a este HTML -->
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Contenedor raíz: layout tipo "app" con sidebar fija + panel principal -->
+<div class="app">
+
+  <!-- ============ SIDEBAR (menú lateral) ============ -->
+  <aside class="sidebar">
+    <!-- Logo / nombre de la marca -->
+    <div class="brand">
+      <div class="brand-mark">
+        <!-- Icono de "caja/almacén" -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"/><path d="M1 3H23V8H1V3Z"/><path d="M10 12H14"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="name">Almacén Central</span>
+        <span class="sub">Inventario</span>
+      </div>
+    </div>
+
+    <!-- Navegación principal, agrupada en 3 secciones -->
+    <nav class="nav">
+      <div class="nav-group-label">Panel</div>
+      <a class="nav-item active">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Resumen
+      </a>
+      <a class="nav-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"/><path d="M1 3H23V8H1V3Z"/><path d="M10 12H14"/></svg>
+        Inventario
+      </a>
+      <a class="nav-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1L21 5L17 9"/><path d="M3 11V9C3 6.79086 4.79086 5 7 5H21"/><path d="M7 23L3 19L7 15"/><path d="M21 13V15C21 17.2091 19.2091 19 17 19H3"/></svg>
+        Movimientos
+      </a>
+
+      <!-- .active marca visualmente el ítem de la página actual (Resumen) -->
+
+      <div class="nav-group-label">Operación</div>
+      <a class="nav-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><path d="M16 8H20L23 11V16H16V8Z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Proveedores
+      </a>
+      <a class="nav-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11L12 14L22 4"/><path d="M21 12V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H16"/></svg>
+        Pedidos de compra
+      </a>
+      <a class="nav-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18A2 2 0 0 0 3.55 21H20.45A2 2 0 0 0 22.18 18L13.71 3.86A2 2 0 0 0 10.29 3.86Z"/><path d="M12 9V13"/><path d="M12 17H12.01"/></svg>
+        Alertas de stock
+      </a>
+
+      <div class="nav-group-label">Análisis</div>
+      <a class="nav-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20V14"/></svg>
+        Reportes
+      </a>
+      <a class="nav-item">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15A1.65 1.65 0 0 0 20.65 13.35 1.65 1.65 0 0 0 20.65 10.65 1.65 1.65 0 0 0 19.4 9A1.65 1.65 0 0 1 18.05 8.16 1.65 1.65 0 0 1 17.87 6.48 1.65 1.65 0 0 0 15.52 4.13 1.65 1.65 0 0 1 13.84 3.95 1.65 1.65 0 0 1 13 2.6 1.65 1.65 0 0 0 11 2.6 1.65 1.65 0 0 1 10.16 3.95 1.65 1.65 0 0 1 8.48 4.13 1.65 1.65 0 0 0 6.13 6.48 1.65 1.65 0 0 1 5.95 8.16 1.65 1.65 0 0 1 4.6 9 1.65 1.65 0 0 0 4.6 13.35 1.65 1.65 0 0 1 5.95 15.84 1.65 1.65 0 0 1 6.13 17.52 1.65 1.65 0 0 0 8.48 19.87 1.65 1.65 0 0 1 10.16 20.05 1.65 1.65 0 0 1 11 21.4 1.65 1.65 0 0 0 13 21.4 1.65 1.65 0 0 1 13.84 20.05 1.65 1.65 0 0 1 15.52 19.87 1.65 1.65 0 0 0 17.87 17.52 1.65 1.65 0 0 1 18.05 15.84 1.65 1.65 0 0 1 19.4 15Z"/></svg>
+        Configuración
+      </a>
+    </nav>
+
+    <!-- Indicador de estado de sincronización (siempre visible, pegado abajo gracias a margin-top:auto en CSS) -->
+    <div class="sidebar-footer">
+      <div class="sync-dot"></div>
+      <div>
+        <div class="sync-title">Sincronizado</div>
+        <div class="sync-time">hace 4 minutos</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN (contenido principal) ============ -->
+  <div class="main">
+
+    <!-- Barra superior: saludo, buscador, notificaciones y usuario -->
+    <header class="topbar">
+      <div>
+        <h1>Hola, Catalina 👋</h1>
+        <div class="path">Así va tu inventario hoy</div>
+      </div>
+
+      <!-- Buscador (sin funcionalidad real, solo input visual) -->
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21L16.65 16.65"/></svg>
+        <input type="text" placeholder="Buscar por SKU, producto o proveedor">
+      </div>
+
+      <div class="topbar-right">
+        <!-- Botón de notificaciones con contador (badge) -->
+        <button class="icon-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z"/><path d="M13.73 21A2 2 0 0 1 10.27 21"/></svg>
+          <span class="badge">5</span>
+        </button>
+        <!-- Perfil del usuario activo -->
+        <div class="user">
+          <div class="user-avatar">CG</div>
+          <div>
+            <div class="user-name">Catalina Gutierrez</div>
+            <div class="user-role">Jefa de bodega</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ============ TARJETAS DE ESTADÍSTICAS (KPIs) ============ -->
+      <!-- 4 tarjetas: artículos en stock, valor del inventario,
+           artículos con stock bajo y movimientos del día -->
+      <section class="stats">
+        <!-- KPI 1: total de artículos en stock -->
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon icon-amber">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"/><path d="M1 3H23V8H1V3Z"/><path d="M10 12H14"/></svg>
+            </div>
+            <span class="trend-chip up">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15L12 9L6 15"/></svg>
+              2.1%
+            </span>
+          </div>
+          <div class="stat-value">8,412</div>
+          <div class="stat-label">Artículos en stock</div>
+        </div>
+
+        <!-- KPI 2: valor monetario total del inventario -->
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon icon-teal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5A3.5 3.5 0 0 0 9.5 12H14.5A3.5 3.5 0 0 1 14.5 19H7"/></svg>
+            </div>
+            <span class="trend-chip up">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15L12 9L6 15"/></svg>
+              2.1%
+            </span>
+          </div>
+          <div class="stat-value">$392,800</div>
+          <div class="stat-label">Valor del inventario</div>
+        </div>
+
+        <!-- KPI 3: artículos con stock bajo (alerta) -->
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon icon-red">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18A2 2 0 0 0 3.55 21H20.45A2 2 0 0 0 22.18 18L13.71 3.86A2 2 0 0 0 10.29 3.86Z"/><path d="M12 9V13"/><path d="M12 17H12.01"/></svg>
+            </div>
+            <span class="trend-chip down">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9L12 15L18 9"/></svg>
+              6 nuevos
+            </span>
+          </div>
+          <div class="stat-value">27</div>
+          <div class="stat-label">Artículos con stock bajo</div>
+        </div>
+
+        <!-- KPI 4: movimientos de inventario registrados hoy (entradas/salidas) -->
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon icon-violet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1L21 5L17 9"/><path d="M3 11V9C3 6.79086 4.79086 5 7 5H21"/><path d="M7 23L3 19L7 15"/><path d="M21 13V15C21 17.2091 19.2091 19 17 19H3"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">143</div>
+          <div class="stat-label">Movimientos hoy · 89 entradas / 54 salidas</div>
+        </div>
+      </section>
+
+      <!-- ============ FILA DE GRÁFICOS ============ -->
+      <!-- 2 columnas: gráfico de barras por categoría + donut de distribución -->
+      <section class="grid-main">
+
+        <!-- Gráfico de barras apiladas: disponible vs comprometido por categoría -->
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Existencias por categoría</div>
+              <div class="panel-sub">Disponible frente a comprometido</div>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-swatch swatch-ink"></span>Disponible</div>
+              <div class="legend-item"><span class="legend-swatch swatch-amber"></span>Comprometido</div>
+            </div>
+          </div>
+
+          <!-- Cada .bar-col es una categoría; la altura total (height en .bar-stack)
+               y la proporción de cada segmento (.seg-amber / .seg-ink) están
+               fijadas manualmente con estilos inline -->
+          <div class="bar-chart">
+            <!-- Electrónica -->
+            <div class="bar-col">
+              <div class="bar-stack" style="height:78%;">
+                <div class="bar-seg seg-amber" style="height:24%;"></div>
+                <div class="bar-seg seg-ink" style="height:76%;"></div>
+              </div>
+            </div>
+            <!-- Ferretería -->
+            <div class="bar-col">
+              <div class="bar-stack" style="height:62%;">
+                <div class="bar-seg seg-amber" style="height:30%;"></div>
+                <div class="bar-seg seg-ink" style="height:70%;"></div>
+              </div>
+            </div>
+            <!-- Embalaje -->
+            <div class="bar-col">
+              <div class="bar-stack" style="height:94%;">
+                <div class="bar-seg seg-amber" style="height:18%;"></div>
+                <div class="bar-seg seg-ink" style="height:82%;"></div>
+              </div>
+            </div>
+            <!-- Oficina -->
+            <div class="bar-col">
+              <div class="bar-stack" style="height:70%;">
+                <div class="bar-seg seg-amber" style="height:40%;"></div>
+                <div class="bar-seg seg-ink" style="height:60%;"></div>
+              </div>
+            </div>
+            <!-- Limpieza -->
+            <div class="bar-col">
+              <div class="bar-stack" style="height:86%;">
+                <div class="bar-seg seg-amber" style="height:22%;"></div>
+                <div class="bar-seg seg-ink" style="height:78%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="bar-labels">
+            <span>Electrónica</span>
+            <span>Ferretería</span>
+            <span>Embalaje</span>
+            <span>Oficina</span>
+            <span>Limpieza</span>
+          </div>
+        </section>
+
+        <!-- Donut de distribución del inventario por categoría.
+             El círculo se dibuja con conic-gradient en CSS (ver .donut en styles.css);
+             los porcentajes del degradado deben coincidir con los % mostrados aquí -->
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Distribución</div>
+              <div class="panel-sub">% del inventario total</div>
+            </div>
+          </div>
+
+          <div class="donut-wrap">
+            <div class="donut">
+              <div class="donut-center">
+                <span class="n">8,412</span>
+                <span class="l">artículos</span>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="donut-legend-row"><span class="legend-swatch swatch-amber"></span>Electrónica<span class="pct">38%</span></div>
+              <div class="donut-legend-row"><span class="legend-swatch swatch-teal"></span>Ferretería<span class="pct">25%</span></div>
+              <div class="donut-legend-row"><span class="legend-swatch swatch-violet"></span>Embalaje<span class="pct">19%</span></div>
+              <div class="donut-legend-row"><span class="legend-swatch swatch-red"></span>Oficina<span class="pct">18%</span></div>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- ============ FILA INFERIOR ============ -->
+      <!-- 2 columnas: lista de alertas de stock bajo + tabla de movimientos -->
+      <section class="grid-lower">
+
+        <!-- Lista de productos con stock bajo/crítico.
+             El ancho de .progress-fill (%) representa cuánto stock queda -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Alertas de stock bajo</div>
+          </div>
+          <div class="alert-list">
+
+            <!-- Crítico: quedan 3 de 40 -->
+            <div class="alert-row">
+              <div class="alert-info">
+                <div class="name">Tarjeta controladora RX-40</div>
+                <div class="meta">SKU 4021 · quedan 3 de 40</div>
+                <div class="progress-track"><div class="progress-fill fill-red" style="width:8%;"></div></div>
+              </div>
+              <span class="alert-tag critico">Crítico</span>
+            </div>
+
+            <!-- Bajo: quedan 14 de 60 -->
+            <div class="alert-row">
+              <div class="alert-info">
+                <div class="name">Cinta de embalaje 48mm</div>
+                <div class="meta">SKU 1187 · quedan 14 de 60</div>
+                <div class="progress-track"><div class="progress-fill fill-amber" style="width:23%;"></div></div>
+              </div>
+              <span class="alert-tag bajo">Bajo</span>
+            </div>
+
+            <!-- Crítico: quedan 6 de 80 -->
+            <div class="alert-row">
+              <div class="alert-info">
+                <div class="name">Guantes de nitrilo talla M</div>
+                <div class="meta">SKU 3390 · quedan 6 de 80</div>
+                <div class="progress-track"><div class="progress-fill fill-red" style="width:7%;"></div></div>
+              </div>
+              <span class="alert-tag critico">Crítico</span>
+            </div>
+
+            <!-- Bajo: quedan 21 de 90 -->
+            <div class="alert-row">
+              <div class="alert-info">
+                <div class="name">Papel bond carta 75g</div>
+                <div class="meta">SKU 2254 · quedan 21 de 90</div>
+                <div class="progress-track"><div class="progress-fill fill-amber" style="width:23%;"></div></div>
+              </div>
+              <span class="alert-tag bajo">Bajo</span>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Tabla de los movimientos de inventario más recientes:
+             tipo Entrada (verde), Salida (rojo) o Ajuste (gris) -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Movimientos recientes</div>
+          </div>
+          <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Responsable</th>
+                <th>Hora</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Cable HDMI 2m</td>
+                <td><span class="move-type"><span class="move-dot entrada"></span>Entrada</span></td>
+                <td class="qty-in">+120</td>
+                <td>J. Ramírez</td>
+                <td>09:42</td>
+              </tr>
+              <tr>
+                <td>Caja de cartón mediana</td>
+                <td><span class="move-type"><span class="move-dot salida"></span>Salida</span></td>
+                <td class="qty-out">−340</td>
+                <td>L. Ortega</td>
+                <td>09:15</td>
+              </tr>
+              <tr>
+                <td>Monitor 24" IPS</td>
+                <td><span class="move-type"><span class="move-dot ajuste"></span>Ajuste</span></td>
+                <td>−2</td>
+                <td>Sistema</td>
+                <td>08:58</td>
+              </tr>
+              <tr>
+                <td>Tarjeta controladora RX-40</td>
+                <td><span class="move-type"><span class="move-dot salida"></span>Salida</span></td>
+                <td class="qty-out">−9</td>
+                <td>D. Palacios</td>
+                <td>08:31</td>
+              </tr>
+              <tr>
+                <td>Guantes de nitrilo talla M</td>
+                <td><span class="move-type"><span class="move-dot entrada"></span>Entrada</span></td>
+                <td class="qty-in">+200</td>
+                <td>J. Ramírez</td>
+                <td>08:02</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </section>
+
+      </section>
+
+    </main>
+  </div>
+</div>
+
+</body>
+</html>
